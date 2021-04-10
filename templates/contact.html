@@ -8,10 +8,9 @@
     <p>{{ email }}</p>
     <p>{{ phone }}</p>
 
-    <form action="" class="contact-form">
-
-        <input type="email" placeholder="email">
-        <textarea name="" id="" cols="30" rows="10"></textarea>
+    <form method="post" class="contact-form">
+        {% csrf_token %}
+        {{ form }}
 
         <button>Küldés</button>
 

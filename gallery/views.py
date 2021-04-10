@@ -1,13 +1,30 @@
 from django.shortcuts import render
-from utilities.mock_data import images_generator
+from django.views.generic import ListView, DetailView
 
-# Create your views here.
-def gallery_view(request):
-    context = {
-        "categories": ["Wedding", "Nature", "Sport"],
-        "photos": images_generator(50)
+
+from .models import Category, Photo
+
+
+class GalleryView(ListView):
+    template_name = "gallery.html"
+    model = Photo
+    context_object_name = "photos"
+
+    extra_context = {
+        "categories": Category.objects.all(),
+
     }
-    return render(request, "gallery.html", context)
+
+    def get_queryset(self):
+        category_name = self.request.GET.get("category")
+        if category_name:
+            photos = Photo.objects.filter(category__title=category_name)
+        else:
+            photos = Photo.objects.all()
+
+        return photos
+
+
 
 def photo_details(request, slug):
     context={
@@ -18,3 +35,9 @@ def photo_details(request, slug):
     }
 
     return render(request, "photo_details.html", context)
+
+
+class PhotoDetailView(DetailView):
+    model = Photo
+    template_name = "photo_details.html"
+    context_object_name = "photo"

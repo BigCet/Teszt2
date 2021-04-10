@@ -1,38 +1,68 @@
-from django.shortcuts import render, HttpResponse
-from utilities.mock_data import images_generator
+from django.views.generic import TemplateView, FormView
+from django.core.mail import send_mail
+import random
 
+from .models import HomePage, AboutPage
+from gallery.models import Photo
+from .forms import ContactForms
 
+class HomeView(TemplateView):
+    template_name = "home.html"
 
-# Create your views here.
-def home_view(request):
-    # todo create a model for this
-    context = {
-        "titles": '"feherrozi"',
-        "subtitles": "Ahol a képzelet és a vászon találkozik",
-        "content": "Háziaszony vagyok, és festő. Kreatív képeimmel szeretném azt megmutatni, ami nem létezik (vagy mégis?) Célom, hogy az emberek megálljanak képeim előtt és elgondolkozzanak. Érezzenek valamit, csodálkozzanak, szeressék, gyűlöljék, de mindenképp érzéseket váltson ki. Ne egyszerűen csak elmenjenek előtte, továbblépjenek. És ha valaki visszatér, hogy újra megnézze, akkor már boldog vagyok.",
-        "photos": images_generator(5)
-
+    extra_context = {
+        "photos": Photo.objects.filter(frontpage=True)
     }
-    return render(request, "home.html", context)
 
-def about_view(request):
-    # todo create a model for this
-    context = {
-        "title": "Hogyan is készülnek a képeim?",
-        "subtitle": "",
-        "content": "Előszőr is tervezéssel! Sokat rajzolok, vázlatokat készítek a festés előtt. Egyrészt, szeretek koncepcióval készülni, és ha megrendelésre dolgozom, szeretek az elképzeléshez, modellhez legjobban illő ötletekkel előállni. A vászon elé emiatt felkészülten érkezek, és lehet is a koncepció kivitelezésével foglalkozni.",
-        "photos": images_generator(1)
+    homepage_content = HomePage.objects.all()
+    if homepage_content:
+        extra_context["title"] = homepage_content[0].title
+        extra_context["subtitle"] = homepage_content[0].subtitle
+        extra_context["content"] = homepage_content[0].content
 
+
+
+class AboutView(TemplateView):
+    template_name = "about.html"
+
+    photos = Photo.objects.all()
+
+    extra_context = {
+        "photo": random.choice(photos)
     }
-    return render(request, "about.html", context)
+
+    aboutpage_content = AboutPage.objects.all()
+    if aboutpage_content:
+        extra_context["title"] = aboutpage_content[0].title
+        extra_context["subtitle"] = aboutpage_content[0].subtitle
+        extra_context["content"] = aboutpage_content[0].content
 
 
-def contact_view(request):
-    # todo create a model for this
-    context = {
+
+
+class ContactView(FormView):
+    template_name = "contact.html"
+    form_class = ContactForms
+    success_url = "/contact/sent/"
+
+    extra_context = {
         "title": "Kérjen tőlünk ajánlatot!",
-        "subtitle": "",
-        "content": "",
-        "photos": images_generator(1)
+
     }
-    return render(request, "contact.html", context)
+
+    def form_valid(self, form):
+
+        send_mail(
+            "Contact",
+            form.data["message"],
+            form.data["email"],
+            ['agrimon67@gmail.com'],
+            fail_silently=False
+
+        )
+
+        return super().form_valid(form)
+
+class ContactSendView(TemplateView):
+    template_name = "email_sent.html"
+
+

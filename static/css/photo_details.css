@@ -6,4 +6,7 @@
 
 .details-container img{
     width: 100%;
+    border-radius: 20px;
+    padding: 5px;
+
 }

@@ -2,6 +2,7 @@
     position: sticky;
     top: 0;
     z-index: 10;
+    min-height: 44px;
 
     background-color: #393f44;
     display: flex;
@@ -16,6 +17,7 @@
     font-size: 20px;
     text-decoration: none;
     padding: 10px 10px;
+    cursor: pointer;
 
 }
 
@@ -35,4 +37,10 @@
     justify-content: none;
     align-items: center;
     padding: 0px 10px ;
+}
+
+
+.mobile-menu i{
+    display: none;
+
 }

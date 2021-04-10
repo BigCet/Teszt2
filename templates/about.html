@@ -5,12 +5,9 @@
 {% block body %}
     <h1>{{ title }}</h1>
     <h3>{{ subtitle }}</h3>
-
     <p>{{ content }}</p>
 
-    {% for photo in photos %}
-         <img src={{ photo }} alt="">
-    {% endfor %}
+    <div class="photo-container" style="background-image: url({{ photo.image.url }})"></div>
 
 
 {% endblock body  %}

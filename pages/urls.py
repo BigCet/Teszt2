@@ -1,10 +1,12 @@
 from django.urls import path
 
-from .views import home_view, contact_view, about_view
+from .views import HomeView, ContactView, AboutView, ContactSendView
 
 urlpatterns = [
-    path('', home_view),
-    path('contact/', contact_view),
-    path('about/', about_view),
+    path('', HomeView.as_view()),
+    path('contact/', ContactView.as_view()),
+    path('contact/sent/', ContactSendView.as_view()),
+    path('about/', AboutView.as_view()),
+
 
 ]
